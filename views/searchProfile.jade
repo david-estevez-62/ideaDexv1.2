@@ -1,8 +1,8 @@
 extends layout
 block content
 	br
-	h3 You are surfing #{user.username}s profile
-	h5(display: hidden) #{user.username}
+	h3 You are surfing #{otherusers.username}s profile
+	h5(display: hidden) #{otherusers.username}
 	if (isFollowing === -1)
 		btn.btn.btn-default#submit2(onclick='sweetAlert("Nice Job", "You just followed this users account!", "success");') Follow
 	div
@@ -22,7 +22,7 @@ block content
 								area(alt="" title="" shape="poly" coords="3,25,22,0,38,25" class="upvote" data-postid=post._id)
 								h3.rating= post.rating
 								area(alt="" title="" shape="poly" coords="40,63,21,90,4,63" class="downvote" data-postid=post._id)
-						td.ideaBody
-							h3= post.contents
-							h6= post.date
+						td
+							h4= post.contents
+							h6.postdetails1= post.date
 						td

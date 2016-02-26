@@ -1,17 +1,26 @@
+@font-face {
+    font-family: mechanicPencil;
+    src: url(Mechanic_Pencil.ttf);
+}
+
+
 /*layout jade*/
 .header {
     width:100%;
-    height:50px;
+    height:60px;
     background: #1C6C8C;
     color:white;
-    font-family: Helvetica;
+    /*font-family: Helvetica;*/
+    font-family: mechanicPencil;
     font-size:24px;
     padding: 0px 0 0 20px;
+    border-bottom: 5px solid grey;
 }
 .homelogo{
 	text-decoration: none;
 	color:white;
-	font-family: 'krungthep', sans-serif;
+	/*font-family: 'krungthep', sans-serif;*/
+  font-family: mechanicPencil;
 	margin-top: -40px;
 	margin-left: 10px;
 	font-size: 35px;
@@ -36,7 +45,9 @@
 	width: 20em;  height: 2em;
 }
 .menuBar {
-  float: right;
+  position: absolute;
+  right: 0;
+  top:60px;
 }
 ul li {
 	display: inline;
@@ -99,6 +110,26 @@ ul li:hover ul {
   position: fixed;
   margin-top: 150px;
 }
+div#postDiv{
+  width:1200px;
+  height: 80px;
+  position: fixed;
+  top:100px;
+  left:200px;
+
+  z-index: 4;
+}
+div#overlay {
+  display: none;
+  z-index: 2;
+  background: #000;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+}
 .postinput{
 	width:400px;
 }
@@ -142,9 +173,7 @@ ul li:hover ul {
 .ideaTable{
 	min-height: 300px;
 	height: auto;
-	margin-top:-200px;
   margin-left: 285px;
-
 /*	border: 5px solid black;
 	border-bottom:0;
 	border-top:0;*/
@@ -156,16 +185,27 @@ ul li:hover ul {
 	/*position: relative;
 	top:100px;
 	left:20%;*/
+  padding-left: 40px;
 	width:900px;
 }
 .delete {
-  border: 2px solid black;
-  padding:10px;
-  height:100px;
+  cursor: pointer;
+  padding:0.5px 0 0 4px;
+  height:21px;
+  width:54px;
+  background: beige;
 }
 .ideaTable tr td {
-  border-bottom: 1px solid #999999;;
+  border-bottom: 4px solid #999999;;
 }
+.postdetails1{
+  padding-top: 5px;
+}
+.postdetails3{
+  margin-top: -1px;
+}
+
+
 
 
 /*discover jade - discover Page*/
@@ -345,7 +385,9 @@ ul li:hover ul {
 	margin-top:-60px;
 }
 .rating{
-  margin-top:-60px;
+  font-family: mechanicPencil;
+  font-size:30px;
+  margin-top:-64px;
   margin-left: 12px;
 }
 .rating2{

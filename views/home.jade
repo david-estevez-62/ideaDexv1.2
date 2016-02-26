@@ -3,9 +3,9 @@ extends layout
 
 block content
 	div
-		h1.headline Welcome, #{user.username}
-		img.gravitar(src="#{user.imageUrl}", height="200px", width="200px")
-		div
+		h3.headline(style="position:absolute;top:85px;") Welcome, #{user.username}
+		img.gravitar(src="#{user.imageUrl}", height="200px", width="200px" style="position:absolute;top:180px;")
+		div#postDiv
 			form#addPost(action="/ideaPosted", method="post", enctype="multipart/form-data", placeholder='Add your ideas here...')
 				input#postinput(type="text", name="contents" placeholder="Add your ideas here...")
 				div.privacy(class="onoffswitch", id='privacytog')
@@ -18,7 +18,10 @@ block content
 				</div>
 				input#submit1(type="submit", value="Post")
 			img.uploadTake(src="/img/uploadpicIcon.png", id="upload", width="25px")
-		
+		div#overlay
+		div#showPostdiv(style="background:grey;height:45px;width:125px;position:fixed;bottom:20px;left:20px;color:white;font-size:40px;z-index:5;")
+			h2 POST
+
 		div
 			table.ideaTable
 				tr
@@ -36,28 +39,20 @@ block content
 								area(alt="" title="" shape="poly" coords="3,25,22,0,38,25" class="upvote" data-postid=post._id)
 								h3.rating= post.rating
 								area(alt="" title="" shape="poly" coords="40,63,21,90,4,63" class="downvote" data-postid=post._id)
-						td.ideaBody
+						td
 							-if (post.contents[0].substr(post.contents[0].length-3) === 'jpg' || post.contents[0].substr(post.contents[0].length-3) === 'png' || post.contents[0].substr(post.contents[0].length-4) === 'jpeg')
 								img(src=post.contents width="400px")
-								h6= post.date
-								h6= post.username
+								h6.postdetails1= post.date
+								div.delete
+									h6.postdetails3 Remove
 							-else
-								h3= post.contents
-								h6= post.date
-								h6= post.username
+								h4= post.contents
+								h6.postdetails1= post.date
+								div.delete(data-postid=post._id)
+									h6.postdetails3 Remove
 						td
 							a.delete(href="#", data-postid=post._id) Remove
 		
-
-								
-						
-//- if post.contents.substr(post.contents.length-3) === "png" || post.contents.substr(post.contents.length-3) === "jpg" || post.contents.substr(post.contents.length-4) === "jpeg"
-	//- form
-	//- 	input(type='file')
-
-	//- form(action="demo_form.asp")
-	//- 	input(type="file" name="pic" accept="image/*")
-	//- 	input(type="submit")
 
 	
 	

@@ -32,9 +32,9 @@ block content
 								area(alt="" title="" shape="poly" coords="3,25,22,0,38,25" class="upvote" data-postid=publicPost._id)
 								h3.rating= publicPost.rating
 								area(alt="" title="" shape="poly" coords="40,63,21,90,4,63" class="downvote" data-postid=publicPost._id)
-						td.ideaBody
-							h3= publicPost.contents
-							h6= publicPost.username
-							h6= publicPost.date
+						td
+							h4= publicPost.contents
+							h6.postdetails1= publicPost.username
+							h6.postdetails2= publicPost.date
 						td
 						

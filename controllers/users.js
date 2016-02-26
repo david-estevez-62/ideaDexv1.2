@@ -8,27 +8,149 @@ var fs = require('fs')
 
 
 var usersController = {
-// //   getAll: function(req, res){
-// //     if(req.query._id){
-// //       // If there is a query parameter for _id,
-// //       // get an individual item:
-// //       User.findById(req.query._id, function(err, result){
-// //         res.send(result);
-// //       });
-// //     } else {
-// //       // else, get all items
-// //       // Go to DB and find all news items
-// //       User.find({}, function(err, results){
-// //         // Send the entire array of results
-// //         // to the client as JSON
-// //         res.send(results);
-// //       });
-// //     }
-// //   },
 
-// //   // getNonPriv: function(req,res){
-// // //
-// //   // },
+  Search: function (req, res) {
+
+  User.find({username: new RegExp(req.body.search, 'i')}, function (err, user) {
+
+    if (err) return handleErr(err);
+
+
+        var matches =_.filter(user, function(obj){
+          return obj.username !== req.params.username;
+        });
+
+      res.render('search', {userlist: matches, user: req.user});
+
+    });
+
+},
+
+  Discover: function (req, res) {
+  var posts = req.user.discover.reverse();
+    res.render('discover', {
+      user: req.user,
+      posts: posts
+    });
+},
+
+Favorites: function (req, res) {
+
+    var favorites = req.user.favorites.reverse();
+
+      res.render('favorites', {
+        user: req.user,
+        favorites: favorites
+      });
+
+},
+
+PostIdea: function (req, res) {
+
+    var data = req.body;
+    var id = req.user._id;
+    var username = req.user.username;
+    var date = Date();
+    var onOff = false;
+    if (req.body.onoffswitch) {
+      onOff = true;
+    }
+    // myid += 1;
+    // console.log(myid);
+
+    // console.log('this is req.body in guestUpdateInfo: ', req.user);
+    User.findById(id, function(err, user) {
+      if (err) return handleErr(err);
+
+      var uid = shortid.generate();
+
+
+
+      newPost = {
+        contents: [data.contents || '/uploads/'+req.files.fileInput.name],
+        _id: uid,
+        privacy: onOff,
+        username: req.user.username,
+        date: date,
+        rating: Number(0),
+        uwv: []
+      };
+
+      user.posts.push(newPost);
+
+      user.save(function(err, user){
+        if(err) return handleErr(err);
+        if(newPost.privacy === false){
+          for (var i = 0; i < user.followers.length; i++) {
+            User.findOne({username:user.followers[i]}, function(err, follower){
+              follower.discover.push(newPost)
+              follower.save();
+            });
+          }
+        }
+      });
+    });
+    
+
+  // Upload images to uploads folder
+    if (!req.files.fileInput || !req.files.fileInput.size) {
+      console.log('do nothing')
+      }
+    else{
+      console.log(util.inspect(req.files));
+      if (req.files.fileInput.size === 0) {
+                  return next(new Error("Hey, first would you select a file?"));
+      }
+      fs.exists(req.files.fileInput.path, function(exists) {
+        if(!exists) {
+          res.end("Well, there is no magic for those who don’t believe in it!");
+        }
+      });
+    }
+    res.redirect("/"+username+"/home");
+
+},
+
+  Notifications: function (req, res) {
+
+  User.find({username: req.user.username}, function (err, data) {
+    if (err) {
+      res.send(err);
+    }
+
+      var counter = data[0].notifications.length;
+
+      var notifications = data[0].notifications.reverse();
+
+
+      // data[0].notifications.remove({})
+      // User.update({"username":"req.user.username"}, {"$unset":{"notifications":{}}})
+      User.update({"username":"req.user.username"}, {"$unset":{"notifications":{}}})
+      // data[0].save()
+      console.log(data[0].notifications.length);
+
+
+
+      res.render('notifications', {
+        user: req.user,
+        // notifications will include followers and favorited posts
+        notifications:notifications
+      });
+
+
+  });
+
+
+
+},
+
+  ChangeUsername: function (req, res) {
+  res.render('changeUsername', {user: req.user});
+},
+
+  ChangePassword: function (req, res) {
+    res.render('changePassword', {user: req.user});
+  },
 
 
   ChngPassword: function (req, res) {
@@ -42,8 +164,8 @@ var usersController = {
       user.incomplete = false;
       user.save(function(err, user) {
         if(err) return handleErr(err);
+
         res.send(user);
-        // res.redirect('/'+username+'/edit');
       });
 
     });
@@ -54,9 +176,6 @@ var usersController = {
     var id = req.user._id;
     var username = req.user.username;
 
-    // console.log(data.username);
-
-    // console.log(id);
 
     User.findById(id, function(err, user) {
       if (err) return handleErr(err);
@@ -64,8 +183,8 @@ var usersController = {
       user.username = data.username || user.username;
       user.save(function(err, user) {
         if(err) return handleErr(err);
+
         res.send(user);
-        // res.redirect('/'+username+'/edit');
       });
     });
   },
@@ -124,10 +243,7 @@ var usersController = {
       username: username
      };
 
-     // console.log(contents)
 
-     // console.log(typeof postid)
-     // console.log(postid)
      User.findOne({username:username}, function(err, user){
       if (err) return handleErr(err);
 
@@ -139,8 +255,7 @@ var usersController = {
 
      User.findById(id, function(err, user){
       if (err) return handleErr(err);
-      // console.log(user.username);
-      // console.log(favorite);
+
 
       var favorites = user.favorites;
 
@@ -155,16 +270,9 @@ var usersController = {
       }else{
         user.favorites.push(favorite);
       }
-      // for(var i = 0; i < user.favorites.length; i++){
-      //  if(user.favorites[i]._id!==postid){
-      //    user.favorites.push(favorite)
-
-      //  }
 
 
-      // }
       user.save();
-
 
      });
 
@@ -221,6 +329,90 @@ var usersController = {
       res.redirect('/'+username+'/home');
       
     });
+  },
+
+
+
+  ViewProfile: function (req, res) {
+  console.log(req.cookies);
+  var isFollowing = req.user.following.indexOf(req.params.usersprof);
+
+
+      User.find({username: req.params.usersprof}, function (err, data) {
+        if (err) {
+          res.send(err);
+        }
+
+        var allPosts= data[0].posts.reverse();
+
+        var publicPosts=_.filter(allPosts, function(obj){
+          return obj.privacy === false;
+        });
+        console.log(publicPosts);
+
+        res.render('searchProfile', {
+          user: req.params,
+          otherusers: data[0],
+          isFollowing: isFollowing,
+          publicPosts: publicPosts,
+
+        });
+
+    });
+  },
+
+  UploadPic: function(req, res){
+    var id = req.user._id;
+
+    User.findById(id, function (err, data) {
+      if (err) return handleErr(err);
+
+      data.imageUrl = '/uploads/' + req.files.imageUrl.name || "/img/gravatar.jpg";
+      
+      data.save(function(err, user) {
+        console.log('ji');
+        if(err) return handleErr(err);
+        // res.send(user);
+        // res.redirect('/'+username+'/edit');
+      });
+
+    });
+
+    if (!req.files.imageUrl || !req.files.imageUrl.size) {
+      console.log('do nothing')
+      }
+    else{
+      console.log(util.inspect(req.files));
+      if (req.files.imageUrl.size === 0) {
+                  return next(new Error("Hey, first would you select a file?"));
+      }
+      fs.exists(req.files.imageUrl.path, function(exists) {
+        if(!exists) {
+          res.end("Well, there is no magic for those who don’t believe in it!");
+        }
+      });
+    }
+    res.redirect("/"+req.user.username+"/home");
+
+
+  },
+
+  ChangePic: function(req, res){
+
+    User.findOne({username: req.user.username}, function (err, data) {
+      if (err) return handleErr(err);
+
+      data.imageUrl = req.body.imageUrl || "/img/gravatar.jpg";
+      
+      data.save(function(err, user) {
+        console.log('ji');
+        if(err) return handleErr(err);
+        res.send(user);
+        // res.redirect('/'+username+'/edit');
+      });
+
+    });
+
   }
 
 };

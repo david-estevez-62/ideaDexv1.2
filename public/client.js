@@ -4,7 +4,82 @@ $(document).ready(function(){
  //    	document.getElementById("addPost").submit();
 	// };
 
+function preventDefault(e) {
+  e = e || window.event;
+  if (e.preventDefault)
+      e.preventDefault();
+  e.returnValue = false;  
+}
 
+function preventDefaultForScrollKeys(e) {
+    if (keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+    }
+}
+
+function disableScroll() {
+  if (window.addEventListener) // older FF
+      window.addEventListener('DOMMouseScroll', preventDefault, false);
+  window.onwheel = preventDefault; // modern standard
+  window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+  window.ontouchmove  = preventDefault; // mobile
+  document.onkeydown  = preventDefaultForScrollKeys;
+}
+
+function enableScroll() {
+    if (window.removeEventListener)
+        window.removeEventListener('DOMMouseScroll', preventDefault, false);
+    window.onmousewheel = document.onmousewheel = null; 
+    window.onwheel = null; 
+    window.ontouchmove = null;  
+    document.onkeydown = null;  
+}
+
+
+
+var displayinput = true;
+
+var overlay = document.getElementById('overlay');
+overlay.style.opacity = .9;
+var postdiv = document.getElementById('postDiv');
+$("#showPostdiv").on('click', function(){
+	if(window.pageYOffset > 300){
+		if(displayinput === true){
+			postdiv.style.visibility = "visible";
+			overlay.style.display = "block";
+
+			disableScroll();
+
+
+			displayinput = false;
+		} else if(displayinput === false){
+			postdiv.style.visibility = "hidden";
+			overlay.style.display = "none";
+
+			enableScroll();
+
+			displayinput = true;
+
+		}
+	}else{
+		if(displayinput === true){
+			postdiv.style.visibility = "visible";
+
+		}else if(displayinput === false){
+			postdiv.style.visibility = "visible";
+			overlay.style.display = "none";
+			displayinput = true;
+		}
+	}
+})
+
+
+document.onscroll = function(){
+	if(window.pageYOffset<100 && displayinput === true){
+		postdiv.style.visibility = "visible";
+	}
+}
 
 ////////////////////////////
 // SignUp Page Validation //
